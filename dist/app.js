@@ -30572,7 +30572,34 @@ $provide.value("$locale", {
 
 })(window, document);
 
-!window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');;angular.module("moviedb", []); //PARA DEFINIR QUE ESTO ES EL MÓDULO, AQUÍ LO DEFINO. EN [] METERÍAMOS LAS DEPENDENCIAS DEL MÓDULO, SI LAS HUBIERA.;
+!window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
+;angular.module("moviedb", []); 
+
+//PARA DEFINIR QUE ESTO ES EL MÓDULO, AQUÍ LO DEFINO. EN [] METERÍAMOS LAS DEPENDENCIAS DEL MÓDULO, SI LAS HUBIERA.
+
+;angular.module("moviedb").controller("AppController", ["$scope", function($scope){
+
+	// inicializar el modelo del scope. Representación del modelo
+
+	$scope.model = {
+		title: ""
+	};
+
+	// Scope event listeners. Manejador de eventos. NO SON EVENTOS DEL DOM, SINO DEL SCOPE DE ANGULAR
+
+	$scope.$on("OnMenuChange", function(evt, data){ 
+
+    //Si no defino nada en la función, puede recibir n número de parámetros, y se recibirá un array arguments con los argumentos recibidos para la función
+
+        $scope.model.title=data;
+        
+	});
+
+
+}]
+);
+
+;
 //En el módulo moviedb, defino el controlador
 angular.module("moviedb").controller("MenuController",
 	 ["$scope", function($scope){
@@ -30581,12 +30608,14 @@ angular.module("moviedb").controller("MenuController",
 	 	// Scope init
 	 	$scope.model = {
 	 		selectedItem: "movies"
-	 	}; //atributo model, que será un objeto
+	 	}; 
+	 	//atributo model, que será un objeto
 
 	 	// Scope methods
 	 	$scope.setSelectedItem = function(item){
 	 		$scope.model.selectedItem = item;
 	 	};
+
 	 	$scope.getClassForItem = function(item){
 	 		if($scope.model.selectedItem == item){
 	 			return "active";
@@ -30594,7 +30623,18 @@ angular.module("moviedb").controller("MenuController",
 	 		else{
 	 			return "";
 	 		}
-	 	}
+	 	};
+
+	 	// Scope watchers
+
+	 	$scope.$watch("model.selectedItem", function(newValue, oldValue)
+	 		{
+	 			//Emitimos un evento para que se entere AppController de que ha cambiado la opción del menú seleccionada
+	 			$scope.$emit("OnMenuChange", newValue);
+	 			//CUANDO CABMIE EL ATRIBUTO SELECTEDITEM...
+	 		});
+
 	 }]
 
- ); //sintaxis del array en línea, porque realiza inyección de dependecias (se le pasa el scope). $scope es un servicio de Angular. Por último, la función que implementa el controlador
+ ); 
+ //sintaxis del array en línea, porque realiza inyección de dependecias (se le pasa el scope). $scope es un servicio de Angular. Por último, la función que implementa el controlador

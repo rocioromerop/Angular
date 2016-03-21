@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html ng-app="moviedb">
+<html ng-app="moviedb" ng-controller="AppController">
 
 <head>
     <meta charset="UTF-8">
-    <title>Movie DB</title>
+    <title>{{ model.title }}</title>
     <link rel="stylesheet" type="text/css" href="dist/style.css">
     <body>
         <nav class="navbar navbar-default" ng-controller="MenuController">
