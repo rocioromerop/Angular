@@ -19,7 +19,6 @@ angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", 
             } else {
                 $scope.uiState = 'ideal';
             }
-
             $scope.model = data;
         },
         //promesa rechazada
