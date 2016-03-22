@@ -12,18 +12,17 @@ angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", 
 
     MovieService.getMovies().then(
         //promesa resuelta
-        function(data) {
-        	$scope.model=data;
+        function(response) {
+        	$scope.model=response.data;
             if ($scope.model.length == 0) {
                 $scope.uiState = 'blank';
             } else {
                 $scope.uiState = 'ideal';
             }
-            $scope.model = data;
         },
         //promesa rechazada
-        function(data) {
-            $log.error("ERROR", data);
+        function(response) {
+            $log.error("ERROR", response.data);
             $scope.uiState = "error";
         }
 

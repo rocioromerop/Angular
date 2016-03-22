@@ -31696,18 +31696,17 @@ angular.module("moviedb").controller("MenuController",
 
     MovieService.getMovies().then(
         //promesa resuelta
-        function(data) {
-        	$scope.model=data;
+        function(response) {
+        	$scope.model=response.data;
             if ($scope.model.length == 0) {
                 $scope.uiState = 'blank';
             } else {
                 $scope.uiState = 'ideal';
             }
-            $scope.model = data;
         },
         //promesa rechazada
-        function(data) {
-            $log.error("ERROR", data);
+        function(response) {
+            $log.error("ERROR", response.data);
             $scope.uiState = "error";
         }
 
@@ -31716,30 +31715,10 @@ angular.module("moviedb").controller("MenuController",
 }]);
 ;angular.module("moviedb").service("MovieService", 
 
-	["$q", "$timeout", function($q, $timeout){
-
-		var movies = [];
+	["$http", function($http){
 
 		this.getMovies = function(){
 
-			// creamos el objeto diferido
-
-			var deferred = $q.defer();
-
-			// asincronía -> vamos a simular un TimeOut
-			$timeout(function(){
-				if(Math.round(Math.random() * 10) %2 == 0){
-					// resolvemos la promesa
-					deferred.resolve(movies);
-				}
-				else{
-					// rechazamos la promesa
-					deferred.reject({error: "Forbidden"});
-				}	
-			}, 500);
-
-			// devolvemos la promesa del objeto diferido
-
-			return deferred.promise;
+			return $http.get("/api/movies");
 		};
 }]);
