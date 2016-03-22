@@ -31616,7 +31616,15 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
 // PARA DEFINIR QUE ESTO ES EL MÓDULO, AQUÍ LO DEFINO. EN [] METERÍAMOS LAS DEPENDENCIAS DEL MÓDULO, SI LAS HUBIERA.
 
-;angular.module("moviedb").controller("AppController", ["$scope", function($scope){
+;angular.module("moviedb").controller("AppController", ["$scope", "$location", function($scope, $location){
+
+    var controller = this;
+    // Controller properties -> No serán públicas en el scope
+    controller.titles = {
+        "/movies" : "Movies List",
+        "/series" : "Series List",
+        "/people" : "People List"
+    };
 
 	// inicializar el modelo del scope. Representación del modelo
 
@@ -31626,22 +31634,22 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
 	// Scope event listeners. Manejador de eventos. NO SON EVENTOS DEL DOM, SINO DEL SCOPE DE ANGULAR
 
-	$scope.$on("OnMenuChange", function(evt, data){ 
 
-    //Si no defino nada en la función, puede recibir n número de parámetros, y se recibirá un array arguments con los argumentos recibidos para la función
-
-        $scope.model.title=data;
-        
-	});
-
+    $scope.$on("$locationChangeSuccess", function(evt, currentRoute){
+        $scope.model.title = controller.titles[$location.path()] || "404 Not Found";
+    });
 
 }]
+
 );
+
+//En angular, cuando vayas a usar algo, tienes que inyectarlo
 
 ;
 //En el módulo moviedb, defino el controlador
 angular.module("moviedb").controller("MenuController",
-	 ["$scope", function($scope){
+	 ["$scope", "$location", function($scope, $location){
+
 	 	//en el scope siempre hay que inicializar los valores del scope
 
 	 	// Scope init
@@ -31651,9 +31659,7 @@ angular.module("moviedb").controller("MenuController",
 	 	//atributo model, que será un objeto
 
 	 	// Scope methods
-	 	$scope.setSelectedItem = function(item){
-	 		$scope.model.selectedItem = item;
-	 	};
+	 	
 
 	 	$scope.getClassForItem = function(item){
 	 		if($scope.model.selectedItem == item){
@@ -31665,13 +31671,10 @@ angular.module("moviedb").controller("MenuController",
 	 	};
 
 	 	// Scope watchers
-
-	 	$scope.$watch("model.selectedItem", function(newValue, oldValue)
-	 		{
-	 			//Emitimos un evento para que se entere AppController de que ha cambiado la opción del menú seleccionada
-	 			$scope.$emit("OnMenuChange", newValue);
-	 			//CUANDO CABMIE EL ATRIBUTO SELECTEDITEM...
-	 		});
+	 	$scope.$on("$locationChangeSuccess", function(evt, currentRoute){
+        	$scope.model.selectedItem = $location.path();
+    	});
+	
 
 	 }]
 
