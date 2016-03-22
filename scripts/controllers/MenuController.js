@@ -6,6 +6,7 @@ angular.module("moviedb").controller("MenuController",
 	 	//en el scope siempre hay que inicializar los valores del scope
 
 	 	// Scope init
+	 	
 	 	$scope.model = {
 	 		selectedItem: "movies"
 	 	}; 
