@@ -31696,8 +31696,8 @@ angular.module("moviedb").controller("MenuController",
 
     MovieService.getMovies().then(
         //promesa resuelta
-        function(response) {
-        	$scope.model=response.data;
+        function(data) {
+        	$scope.model=data;
             if ($scope.model.length == 0) {
                 $scope.uiState = 'blank';
             } else {
@@ -31705,8 +31705,8 @@ angular.module("moviedb").controller("MenuController",
             }
         },
         //promesa rechazada
-        function(response) {
-            $log.error("ERROR", response.data);
+        function(data) {
+            $log.error("ERROR", data);
             $scope.uiState = "error";
         }
 
@@ -31714,11 +31714,33 @@ angular.module("moviedb").controller("MenuController",
 
 }]);
 ;angular.module("moviedb").service("MovieService", 
-
-	["$http", function($http){
+	["$http", "$q", function($http, $q){
 
 		this.getMovies = function(){
+			
 
-			return $http.get("/api/movies");
+			// Crear el objeto diferido
+			var deferred = $q.defer();
+			// Hacer trabajo asíncrono
+			$http.get("/api/movies").then(
+				//petición ok 
+			
+				function(response){
+					// resolver la promesa
+					deferred.resolve(response.data);
+				},
+				//pretición KO
+				function(response){
+					// rechazar la promesa
+					deferred.reject(response.data);
+				}
+
+			);
+
+			// devolver la promesa
+			return deferred.promise;
 		};
-}]);
+}]
+
+
+);
