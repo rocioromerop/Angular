@@ -35416,21 +35416,21 @@ angular.module("moviedb").controller("MenuController",
 			if (rating <= 10 && rating >= 9){
 				return (mode == "US")? "A": "SB";
 			}
-			if( rating <= 9  && rating >= 7){
+			else if (rating < 9  && rating >= 7){
 				return (mode == "US")? "B": "NT";
 			}
-			if( rating < 7 && rating >= 6){
+			else if (rating < 7 && rating >= 6){
 				return (mode == "US")? "C": "B";
 			}
-			if( rating < 6 && rating >= 5){
+			else if (rating < 6 && rating >= 5){
 				return (mode == "US")? "D": "SF";
 			}
-			if( rating < 5){
+			else if (rating < 5){
 				return (mode == "US")? "E": "IN";
 			}
 		}
-	}
-]);
+	}]
+);
 ;angular.module("moviedb").service("MovieService", 
 	["$http", "$q", function($http, $q){
 
