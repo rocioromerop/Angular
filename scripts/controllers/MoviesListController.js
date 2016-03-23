@@ -6,8 +6,9 @@ angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", 
     $scope.uiState = "loading";
 
     // Scope watchers
-
-
+    
+    
+    
     // Controller start
 
     MovieService.getMovies().then(
