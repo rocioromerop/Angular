@@ -1,12 +1,13 @@
-angular.module("moviedb").controller("AppController", ["$scope", "$location", function($scope, $location){
+angular.module("moviedb").controller("AppController", ["$scope", "$location", "paths", function($scope, $location, paths){
 
     var controller = this;
+
     // Controller properties -> No serán públicas en el scope
-    controller.titles = {
-        "/movies" : "Movies List",
-        "/series" : "Series List",
-        "/people" : "People List"
-    };
+    controller.titles = {};
+        controller.titles[paths.movies] = "Movies List";
+        controller.titles[paths.series] = "Series List";
+        controller.titles[paths.people] = "People List";
+    
 
 	// inicializar el modelo del scope. Representación del modelo
 

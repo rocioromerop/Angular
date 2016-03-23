@@ -35281,20 +35281,18 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
 ;angular.module("moviedb", ['ngRoute']).config(
 	// solicitamos que se nos inyecten cosas para así configurarlas
-	["$routeProvider", function($routeProvider){
+	["$routeProvider", "paths",function($routeProvider, paths){
 
 		// configuro las URLs de la aplicación
 
-		$routeProvider.when('/movies', {
+		$routeProvider.when(paths.movies, {
 			templateUrl: 'views/MoviesList.html'
-		}).when('/series', {
+		}).when(paths.series, {
 			templateUrl: 'views/SeriesList.html'
-		}).when('/people', {
+		}).when(paths.people, {
 			templateUrl: 'views/PeopleList.html'
-		}).when('', {
-			redirectTo: '/movies'
-		}).when('/', {
-			redirectTo: '/movies'
+		}).when(paths.home, {
+			redirectTo: paths.movies
 		}).otherwise({
 			templateUrl: 'views/404.html'
 		})
@@ -35304,15 +35302,16 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
 // PARA DEFINIR QUE ESTO ES EL MÓDULO, AQUÍ LO DEFINO. EN [] METERÍAMOS LAS DEPENDENCIAS DEL MÓDULO, SI LAS HUBIERA.
 
-;angular.module("moviedb").controller("AppController", ["$scope", "$location", function($scope, $location){
+;angular.module("moviedb").controller("AppController", ["$scope", "$location", "paths", function($scope, $location, paths){
 
     var controller = this;
+
     // Controller properties -> No serán públicas en el scope
-    controller.titles = {
-        "/movies" : "Movies List",
-        "/series" : "Series List",
-        "/people" : "People List"
-    };
+    controller.titles = {};
+        controller.titles[paths.movies] = "Movies List";
+        controller.titles[paths.series] = "Series List";
+        controller.titles[paths.people] = "People List";
+    
 
 	// inicializar el modelo del scope. Representación del modelo
 
@@ -35336,15 +35335,17 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 ;
 //En el módulo moviedb, defino el controlador
 angular.module("moviedb").controller("MenuController",
-	 ["$scope", "$location", function($scope, $location){
+	 ["$scope", "$location", "paths", function($scope, $location, paths){
 
 	 	//en el scope siempre hay que inicializar los valores del scope
 
 	 	// Scope init
 	 	
 	 	$scope.model = {
-	 		selectedItem: "movies"
+	 		selectedItem: paths.movies
 	 	}; 
+
+	 	$scope.paths = paths;
 	 	//atributo model, que será un objeto
 
 	 	// Scope methods
@@ -35462,3 +35463,12 @@ angular.module("moviedb").controller("MenuController",
 
 
 );
+;angular.module('moviedb').constant("paths", {
+	home: "/",
+	movies: "/movies",
+	series: "/series",
+	people: "/people"
+});
+
+//No hay inyección de cosas, no puedo hacer florituras xD
+

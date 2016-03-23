@@ -1,15 +1,17 @@
 
 //En el módulo moviedb, defino el controlador
 angular.module("moviedb").controller("MenuController",
-	 ["$scope", "$location", function($scope, $location){
+	 ["$scope", "$location", "paths", function($scope, $location, paths){
 
 	 	//en el scope siempre hay que inicializar los valores del scope
 
 	 	// Scope init
 	 	
 	 	$scope.model = {
-	 		selectedItem: "movies"
+	 		selectedItem: paths.movies
 	 	}; 
+
+	 	$scope.paths = paths;
 	 	//atributo model, que será un objeto
 
 	 	// Scope methods
