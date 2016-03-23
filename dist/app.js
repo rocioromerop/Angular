@@ -35279,7 +35279,7 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
 })(window, window.angular);
 
-;angular.module("moviedb", ['ngRoute']).config(
+;angular.module("moviedb", ['ngRoute', "URL"]).config(
 	// solicitamos que se nos inyecten cosas para así configurarlas
 	["$routeProvider", "paths",function($routeProvider, paths){
 
@@ -35287,6 +35287,8 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
 		$routeProvider.when(paths.movies, {
 			templateUrl: 'views/MoviesList.html'
+		}).when(paths.movieDetail, {
+			templateUrl: 'views/MovieDetail.html'
 		}).when(paths.series, {
 			templateUrl: 'views/SeriesList.html'
 		}).when(paths.people, {
@@ -35371,17 +35373,45 @@ angular.module("moviedb").controller("MenuController",
  ); 
  //sintaxis del array en línea, porque realiza inyección de dependecias (se le pasa el scope). $scope es un servicio de Angular. Por último, la función que implementa el controlador
 
-;angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", "MovieService", function($log, $scope, MovieService) {
+;angular.module("moviedb").controller("MovieDetailController", 
+	["$scope", "$routeParams", "MovieService", "paths", "$location", function($scope, $routeParams, MovieService, paths, $location){
+
+		// scope init
+		$scope.uiState = 'loading';
+		$scope.model = {};
+
+		// controller init
+		MovieService.getMovie($routeParams.id).then(
+			// Película encontrada
+			function(movie){
+				$scope.model = movie;
+				$scope.uiState = 'ideal';
+			},
+			// Película no encontrada
+			function(error){
+				// TODO: improve error management
+				$location.url(paths.notFound);
+			}
+		);
+
+	}]
+);
+;angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", "MovieService", "URL", "paths",function($log, $scope, MovieService, URL, paths) {
 
     // Scope model init
 
     $scope.model = [];
     $scope.uiState = "loading";
-
+    //indicarle que el atributo url es la función URL.resolve
+    $scope.url = URL.resolve;
     // Scope watchers
-    
-    
-    
+
+    // Scope methods
+
+    $scope.getMovieDetailURL = function(movie){
+        return URL.resolve(paths.movieDetail, {id: movie.id});
+    }
+
     // Controller start
 
     MovieService.getMovies().then(
@@ -35433,15 +35463,14 @@ angular.module("moviedb").controller("MenuController",
 	}]
 );
 ;angular.module("moviedb").service("MovieService", 
-	["$http", "$q", function($http, $q){
+	["$http", "$q", "apiPaths", "URL", function($http, $q, apiPaths, URL){
 
-		this.getMovies = function(){
-			
-
+		this.apiRequest = function(url){
 			// Crear el objeto diferido
 			var deferred = $q.defer();
 			// Hacer trabajo asíncrono
-			$http.get("/api/movies").then(
+			$http.get(url).then(
+
 				//petición ok 
 			
 				function(response){
@@ -35458,16 +35487,59 @@ angular.module("moviedb").controller("MenuController",
 
 			// devolver la promesa
 			return deferred.promise;
+		}
+
+		this.getMovies = function(){
+			return this.apiRequest(apiPaths.movies);
+			
 		};
+
+		this.getMovie = function(movieId){
+			var url = URL.resolve(apiPaths.movieDetail, {id: movieId});
+			return this.apiRequest(url);
+		}
+
 }]
 
-
 );
+;angular.module('URL', []).service("URL", ["$log", function($log){
+
+	this.resolve = function(url, params){
+		var finalURL = [];
+		var urlParts = url.split("/");
+		for(var i in urlParts){
+			// En javascript este for es la forma abreviada de hacer un for(int i = 0; i < lo que sea ; i++)
+			var urlPart = urlParts[i];
+			if(urlPart.substr(0, 1) == ":"){
+				//convierte :id en id
+				var paramName = urlPart.substr(1);
+				var paramValue = params[paramName] || null;
+				if(paramValue == null){
+					$log.error("URL.resolve error: ", paramName, "not found in params dict. Check your 'params' value bro");
+					return;
+				}
+				finalURL.push(paramValue);
+			}
+			else{
+				finalURL.push(urlPart);
+			}
+		}
+		return finalURL.join("/");
+	};
+}]);
+
+// ME CREO UN MÓDULO DE ÁNGULAR, QUE PUEDO USAR EN OTROS PROYECTOS. EN APP.JS TENGO QUE DECIRLE QUE MOVIEDB DEPENDE DEL MÓDULO URL
+;angular.module('moviedb').value("apiPaths", {
+	movies: "/api/movies/",
+	movieDetail: "/api/movies/:id"
+});
 ;angular.module('moviedb').constant("paths", {
 	home: "/",
 	movies: "/movies",
 	series: "/series",
-	people: "/people"
+	people: "/people",
+	movieDetail: "/movies/:id/",
+	notFound: "/sorry"
 });
 
 //No hay inyección de cosas, no puedo hacer florituras xD

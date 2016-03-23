@@ -1,13 +1,12 @@
 angular.module("moviedb").service("MovieService", 
-	["$http", "$q", function($http, $q){
+	["$http", "$q", "apiPaths", "URL", function($http, $q, apiPaths, URL){
 
-		this.getMovies = function(){
-			
-
+		this.apiRequest = function(url){
 			// Crear el objeto diferido
 			var deferred = $q.defer();
 			// Hacer trabajo asíncrono
-			$http.get("/api/movies").then(
+			$http.get(url).then(
+
 				//petición ok 
 			
 				function(response){
@@ -24,8 +23,18 @@ angular.module("moviedb").service("MovieService",
 
 			// devolver la promesa
 			return deferred.promise;
-		};
-}]
+		}
 
+		this.getMovies = function(){
+			return this.apiRequest(apiPaths.movies);
+			
+		};
+
+		this.getMovie = function(movieId){
+			var url = URL.resolve(apiPaths.movieDetail, {id: movieId});
+			return this.apiRequest(url);
+		}
+
+}]
 
 );
