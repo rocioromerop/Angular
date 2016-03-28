@@ -5,12 +5,15 @@ angular.module("moviedb").controller("MovieDetailController",
 		$scope.uiState = 'loading';
 		$scope.model = {};
 
+		$scope.$emit("ChangeTitle", "Loading...");
+
 		// controller init
 		MovieService.getMovie($routeParams.id).then(
 			// Película encontrada
 			function(movie){
 				$scope.model = movie;
 				$scope.uiState = 'ideal';
+				$scope.$emit("ChangeTitle", $scope.model.title);
 			},
 			// Película no encontrada
 			function(error){
@@ -18,6 +21,8 @@ angular.module("moviedb").controller("MovieDetailController",
 				$location.url(paths.notFound);
 			}
 		);
+
+
 
 	}]
 );

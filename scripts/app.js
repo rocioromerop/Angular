@@ -1,6 +1,6 @@
-angular.module("moviedb", ['ngRoute', "URL"]).config(
+angular.module("moviedb", ['ngRoute', "URL", "ngSanitize"]).config(
 	// solicitamos que se nos inyecten cosas para así configurarlas
-	["$routeProvider", "paths",function($routeProvider, paths){
+	["$routeProvider", "paths", function($routeProvider, paths){
 
 		// configuro las URLs de la aplicación
 
