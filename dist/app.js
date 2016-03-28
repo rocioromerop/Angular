@@ -36135,9 +36135,13 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
 		$routeProvider.when(paths.movies, {
 			templateUrl: 'views/MoviesList.html'
 		}).when(paths.movieDetail, {
-			templateUrl: 'views/MovieDetail.html'
+			controller : 'MovieDetailController',
+			templateUrl: 'views/MediaItemDetail.html'
 		}).when(paths.series, {
 			templateUrl: 'views/SeriesList.html'
+		}).when(paths.serieDetail, {
+			controller : 'SerieDetailController',
+			templateUrl: 'views/MediaItemDetail.html'
 		}).when(paths.people, {
 			templateUrl: 'views/PeopleList.html'
 		}).when(paths.home, {
@@ -36291,13 +36295,95 @@ angular.module("moviedb").controller("MenuController",
 }
 
 ]);
-;angular.module("moviedb").controller("SeriesListController", 
-	["$scope", "APIClient", function($scope, APIClient){
-		
-		
-		
+;angular.module("moviedb").controller("SerieDetailController", 
+	["$scope", "$routeParams", "APIClient", "paths", "$location", function($scope, $routeParams, APIClient, paths, $location){
+
+		// scope init
+		$scope.uiState = 'loading';
+		$scope.model = {};
+
+		$scope.$emit("ChangeTitle", "Loading...");
+
+		// controller init
+		APIClient.getSerie($routeParams.id).then(
+			// Película encontrada
+			function(serie){
+				$scope.model = serie;
+				$scope.uiState = 'ideal';
+				$scope.$emit("ChangeTitle", $scope.model.title);
+			},
+			// Película no encontrada
+			function(error){
+				// TODO: improve error management
+				$location.url(paths.notFound);
+			}
+		);
+
+
+
 	}]
 );
+;angular.module("moviedb").controller("SeriesListController", 
+	["$log", "$scope", "APIClient", "URL", "paths",function($log, $scope, APIClient, URL, paths) {
+
+    // Scope model init
+
+    $scope.model = [];
+    $scope.uiState = "loading";
+    //indicarle que el atributo url es la función URL.resolve
+    $scope.url = URL.resolve;
+    // Scope watchers
+
+    // Scope methods
+
+    $scope.getSerieDetailURL = function(serie){
+        return URL.resolve(paths.serieDetail, {id: serie.id});
+    }
+
+    // Controller start
+
+    APIClient.getSeries().then(
+        //promesa resuelta
+        function(data) {
+        	$scope.model=data;
+            if ($scope.model.length == 0) {
+                $scope.uiState = 'blank';
+            } else {
+                $scope.uiState = 'ideal';
+            }
+        },
+        //promesa rechazada
+        function(data) {
+            $log.error("ERROR", data);
+            $scope.uiState = "error";
+        }
+
+    );
+
+}
+
+]
+);
+;angular.module("moviedb").directive('mediaItem',  function(){
+	// Runs during compile
+	return {
+		// name: '',
+		// priority: 1,
+		// terminal: true,
+		scope: {
+			// mapeo two way binding
+			model: "=item",
+		}, // {} = isolate, true = child, false/undefined = no change
+		// controller: function($scope, $element, $attrs, $transclude) {},
+		// require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
+		restrict: 'AE', // E = Element, A = Attribute, C = Class, M = Comment
+		// template: '',
+		templateUrl: 'views/mediaItem.html',
+		// replace: true,
+		// transclude: true,
+		// compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
+	};
+});
 ;angular.module("moviedb").directive('mediaItemList', function(){
 	// Runs during compile
 	return {
@@ -36442,6 +36528,7 @@ angular.module("moviedb").controller("MenuController",
 	series: "/series",
 	people: "/people",
 	movieDetail: "/movies/:id/",
+	serieDetail: "/series/:id/",
 	notFound: "/sorry"
 });
 
