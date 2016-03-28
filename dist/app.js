@@ -36307,7 +36307,8 @@ angular.module("moviedb").controller("MenuController",
 		 scope: {
 		 	model: "=items",
 		 	// Para pasar métodos:
-		 	getDetailUrl: "="
+		 	//Tendré que poner el código a ejecutar cuando en la directiva yo llame al getDetailUrl
+		 	getDetailUrl: "&"
 		 }, // {} = isolate, true = child, false/undefined = no change
 		// controller: function($scope, $element, $attrs, $transclude) {},
 		// require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
