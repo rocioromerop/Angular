@@ -36225,7 +36225,7 @@ angular.module("moviedb").controller("MenuController",
  //sintaxis del array en línea, porque realiza inyección de dependecias (se le pasa el scope). $scope es un servicio de Angular. Por último, la función que implementa el controlador
 
 ;angular.module("moviedb").controller("MovieDetailController", 
-	["$scope", "$routeParams", "MovieService", "paths", "$location", function($scope, $routeParams, MovieService, paths, $location){
+	["$scope", "$routeParams", "APIClient", "paths", "$location", function($scope, $routeParams, APIClient, paths, $location){
 
 		// scope init
 		$scope.uiState = 'loading';
@@ -36234,7 +36234,7 @@ angular.module("moviedb").controller("MenuController",
 		$scope.$emit("ChangeTitle", "Loading...");
 
 		// controller init
-		MovieService.getMovie($routeParams.id).then(
+		APIClient.getMovie($routeParams.id).then(
 			// Película encontrada
 			function(movie){
 				$scope.model = movie;
@@ -36252,7 +36252,7 @@ angular.module("moviedb").controller("MenuController",
 
 	}]
 );
-;angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", "MovieService", "URL", "paths",function($log, $scope, MovieService, URL, paths) {
+;angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", "APIClient", "URL", "paths",function($log, $scope, APIClient, URL, paths) {
 
     // Scope model init
 
@@ -36270,7 +36270,7 @@ angular.module("moviedb").controller("MenuController",
 
     // Controller start
 
-    MovieService.getMovies().then(
+    APIClient.getMovies().then(
         //promesa resuelta
         function(data) {
         	$scope.model=data;
@@ -36288,7 +36288,41 @@ angular.module("moviedb").controller("MenuController",
 
     );
 
-}]);
+}
+
+]);
+;angular.module("moviedb").controller("SeriesListController", 
+	["$scope", "APIClient", function($scope, APIClient){
+		
+		
+		
+	}]
+);
+;angular.module("moviedb").directive('mediaItemList', function(){
+	// Runs during compile
+	return {
+		// name: '',
+		// priority: 1,
+		// terminal: true,
+		 scope: {
+		 	model: "=items",
+		 	// Para pasar métodos:
+		 	getDetailUrl: "&"
+		 }, // {} = isolate, true = child, false/undefined = no change
+		// controller: function($scope, $element, $attrs, $transclude) {},
+		// require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
+		// restrict: 'A', // E = Element, A = Attribute, C = Class, M = Comment
+		restrict: "AE",
+		// template: '',
+		templateUrl: 'views/mediaItemList.html',
+		// replace: true,
+		// transclude: true,
+		// compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
+		//link: function($scope, iElm, iAttrs, controller) {
+			
+		//}
+	};
+});
 ;angular.module('moviedb').filter('ago', 
 	[function(){
 		// un filtro tiene que devolver una función
@@ -36318,7 +36352,7 @@ angular.module("moviedb").controller("MenuController",
 		}
 	}]
 );
-;angular.module("moviedb").service("MovieService", 
+;angular.module("moviedb").service("APIClient", 
 	["$http", "$q", "apiPaths", "URL", function($http, $q, apiPaths, URL){
 
 		this.apiRequest = function(url){
@@ -36355,6 +36389,16 @@ angular.module("moviedb").controller("MenuController",
 			return this.apiRequest(url);
 		}
 
+		this.getSeries = function(){
+			return this.apiRequest(apiPaths.series);
+			
+		};
+
+		this.getSerie = function(serieId){
+			var url = URL.resolve(apiPaths.serieDetail, {id: serieId});
+			return this.apiRequest(url);
+		}
+
 }]
 
 );
@@ -36387,7 +36431,9 @@ angular.module("moviedb").controller("MenuController",
 // ME CREO UN MÓDULO DE ÁNGULAR, QUE PUEDO USAR EN OTROS PROYECTOS. EN APP.JS TENGO QUE DECIRLE QUE MOVIEDB DEPENDE DEL MÓDULO URL
 ;angular.module('moviedb').value("apiPaths", {
 	movies: "/api/movies/",
-	movieDetail: "/api/movies/:id"
+	movieDetail: "/api/movies/:id",
+	series: "/api/series/",
+	serieDetail: "/api/series/:id"
 });
 ;angular.module('moviedb').constant("paths", {
 	home: "/",

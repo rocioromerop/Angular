@@ -1,4 +1,4 @@
-angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", "MovieService", "URL", "paths",function($log, $scope, MovieService, URL, paths) {
+angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", "APIClient", "URL", "paths",function($log, $scope, APIClient, URL, paths) {
 
     // Scope model init
 
@@ -16,7 +16,7 @@ angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", 
 
     // Controller start
 
-    MovieService.getMovies().then(
+    APIClient.getMovies().then(
         //promesa resuelta
         function(data) {
         	$scope.model=data;
@@ -34,4 +34,6 @@ angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", 
 
     );
 
-}]);
+}
+
+]);

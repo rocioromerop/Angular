@@ -1,5 +1,5 @@
 angular.module("moviedb").controller("MovieDetailController", 
-	["$scope", "$routeParams", "MovieService", "paths", "$location", function($scope, $routeParams, MovieService, paths, $location){
+	["$scope", "$routeParams", "APIClient", "paths", "$location", function($scope, $routeParams, APIClient, paths, $location){
 
 		// scope init
 		$scope.uiState = 'loading';
@@ -8,7 +8,7 @@ angular.module("moviedb").controller("MovieDetailController",
 		$scope.$emit("ChangeTitle", "Loading...");
 
 		// controller init
-		MovieService.getMovie($routeParams.id).then(
+		APIClient.getMovie($routeParams.id).then(
 			// Película encontrada
 			function(movie){
 				$scope.model = movie;
