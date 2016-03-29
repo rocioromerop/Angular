@@ -36166,6 +36166,7 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
         controller.titles[paths.movies] = "Movies List";
         controller.titles[paths.series] = "Series List";
         controller.titles[paths.people] = "People List";
+        controller.titles[paths.newMovie] = "New Movie";
     
 
 	// inicializar el modelo del scope. Representación del modelo
@@ -36175,7 +36176,6 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
 	};
 
 	// Scope event listeners. Manejador de eventos. NO SON EVENTOS DEL DOM, SINO DEL SCOPE DE ANGULAR
-
 
     $scope.$on("$locationChangeSuccess", function(evt, currentRoute){
         $scope.model.title = controller.titles[$location.path()] || "404 Not Found";
@@ -36196,7 +36196,7 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
 angular.module("moviedb").controller("MenuController",
 	 ["$scope", "$location", "paths", function($scope, $location, paths){
 
-	 	//en el scope siempre hay que inicializar los valores del scope
+	 	// en el scope siempre hay que inicializar los valores del scope
 
 	 	// Scope init
 	 	
@@ -36228,6 +36228,7 @@ angular.module("moviedb").controller("MenuController",
 	 }]
 
  ); 
+
  //sintaxis del array en línea, porque realiza inyección de dependecias (se le pasa el scope). $scope es un servicio de Angular. Por último, la función que implementa el controlador
 
 ;angular.module("moviedb").controller("MovieDetailController", 
@@ -36258,6 +36259,27 @@ angular.module("moviedb").controller("MenuController",
 
 	}]
 );
+;angular.module('moviedb').controller("MovieFormController", 
+	["$scope", "APIClient", function($scope, APIClient){
+		// Scope init
+		$scope.model = {};
+
+		$scope.successMessage = null;
+		$scope.errorMessage = null;
+		// Scope methods
+		$scope.saveMovie = function(){
+			APIClient.createMovie($scope.model).then(
+				function(movie){
+					$scope.successMessage = "Movie saved! <a href='#/movies/'"+ movie.id +">View new movie detail</a>";
+					$scope.model ={};
+					$scope.movieForm.$setPristine();
+				},
+				function(error){
+					$scope.errorMessage = "Fatal error. The end is near.";
+				}
+			)
+		}
+}]);
 ;angular.module("moviedb").controller("MoviesListController", ["$log", "$scope", "APIClient", "URL", "paths",function($log, $scope, APIClient, URL, paths) {
 
     // Scope model init
@@ -36433,7 +36455,8 @@ angular.module("moviedb").controller("MenuController",
 		 	model: "=items",
 		 	// Para pasar métodos:
 		 	//Tendré que poner el código a ejecutar cuando en la directiva yo llame al getDetailUrl
-		 	getDetailUrl: "&"
+		 	getDetailUrl: "&",
+		 	dateMode: "@"
 		 }, // {} = isolate, true = child, false/undefined = no change
 		// controller: function($scope, $element, $attrs, $transclude) {},
 		// require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
@@ -36538,6 +36561,22 @@ angular.module("moviedb").controller("MenuController",
 		this.getSerie = function(serieId){
 			var url = URL.resolve(apiPaths.serieDetail, {id: serieId});
 			return this.apiRequest(url);
+		}
+
+		this.createMovie = function(movie){
+			var deferred = $q.defer();
+			$http.post(apiPaths.movies, movie).then(
+				
+				function(response){
+					deferred.resolve(response.data);
+				},
+				function(response){
+					deferred.reject(response.data)
+				}
+			)
+
+			// devolver la promesa
+			return deferred.promise;
 		}
 
 }]

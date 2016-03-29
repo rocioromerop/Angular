@@ -7,6 +7,7 @@ angular.module("moviedb").controller("AppController", ["$scope", "$location", "p
         controller.titles[paths.movies] = "Movies List";
         controller.titles[paths.series] = "Series List";
         controller.titles[paths.people] = "People List";
+        controller.titles[paths.newMovie] = "New Movie";
     
 
 	// inicializar el modelo del scope. Representación del modelo
@@ -16,7 +17,6 @@ angular.module("moviedb").controller("AppController", ["$scope", "$location", "p
 	};
 
 	// Scope event listeners. Manejador de eventos. NO SON EVENTOS DEL DOM, SINO DEL SCOPE DE ANGULAR
-
 
     $scope.$on("$locationChangeSuccess", function(evt, currentRoute){
         $scope.model.title = controller.titles[$location.path()] || "404 Not Found";

@@ -3,7 +3,7 @@
 angular.module("moviedb").controller("MenuController",
 	 ["$scope", "$location", "paths", function($scope, $location, paths){
 
-	 	//en el scope siempre hay que inicializar los valores del scope
+	 	// en el scope siempre hay que inicializar los valores del scope
 
 	 	// Scope init
 	 	
@@ -35,4 +35,5 @@ angular.module("moviedb").controller("MenuController",
 	 }]
 
  ); 
+
  //sintaxis del array en línea, porque realiza inyección de dependecias (se le pasa el scope). $scope es un servicio de Angular. Por último, la función que implementa el controlador
