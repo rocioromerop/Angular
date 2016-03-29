@@ -1,6 +1,7 @@
 angular.module('moviedb').constant("paths", {
 	home: "/",
 	movies: "/movies",
+	newMovie: "/movies/new",
 	series: "/series",
 	people: "/people",
 	movieDetail: "/movies/:id/",

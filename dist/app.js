@@ -36134,6 +36134,8 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
 
 		$routeProvider.when(paths.movies, {
 			templateUrl: 'views/MoviesList.html'
+		}).when(paths.newMovie, {
+			templateUrl: 'views/NewMovie.html'
 		}).when(paths.movieDetail, {
 			controller : 'MovieDetailController',
 			templateUrl: 'views/MediaItemDetail.html'
@@ -36540,6 +36542,7 @@ angular.module("moviedb").controller("MenuController",
 ;angular.module('moviedb').constant("paths", {
 	home: "/",
 	movies: "/movies",
+	newMovie: "/movies/new",
 	series: "/series",
 	people: "/people",
 	movieDetail: "/movies/:id/",
